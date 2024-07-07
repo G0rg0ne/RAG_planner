@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "master_planner" # choose a nice project name
+version = "0.1.0" # select a version number
+description = "Description." # please describe it
+authors = ["G0rg0ne"]
+license = "LICENSE" # make sure this file exists
+readme = "README.md" # make sure this file exists
+packages = [{ include = "master_planner", from = "src" }] # read belows
+include = ["*.py", "src/**/*.json", "src/**/*.toml"] # on this later
+exclude = ["test/*"] # on this later
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "cython"]
+build-backend = "poetry.core.masonry.api"
+
+# Specify Python version(s) and real dependencies in this section
+[tool.poetry.dependencies]
+python = "^3.10"
+jupyter = "*"
+jupyterlab_server = "*"
+jupyterlab = "*"
+pyrootutils = "*"
+loguru = "*"
+
+# Here, specify development dependencies, which won't be part of the actual final dependency list
+# but that you need, well, to develop your project
+torch = "^2.3.1"
+transformers = "^4.42.3"
+openai = "^1.35.10"
+[tool.poetry.dev-dependencies]
+black = { extras = ["jupyter"], version = "*" }
+flake8 = "*"
+ipython = "*"
+isort = "*"
+mypy = "*"
+pylint = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+pytest-pylint = "*"
+pytest-mypy = "*"
+pytest-testmon = "*"
+pytest-xdist = "*"
+nbmake = "*"
