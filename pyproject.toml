@@ -27,6 +27,7 @@ loguru = "*"
 torch = "^2.3.1"
 transformers = "^4.42.3"
 openai = "^1.35.10"
+replicate = "^0.28.0"
 [tool.poetry.dev-dependencies]
 black = { extras = ["jupyter"], version = "*" }
 flake8 = "*"
