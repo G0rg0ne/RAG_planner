@@ -21,3 +21,36 @@ for event in replicate.stream(
     },
 ):
     print(str(event), end="")
+
+
+
+import os
+from transformers import RagTokenizer, RagRetriever, RagTokenForGeneration
+
+# Initialize the tokenizer, retriever, and the model
+tokenizer = RagTokenizer.from_pretrained("facebook/rag-token-nq")
+retriever = RagRetriever.from_pretrained("facebook/rag-token-nq", index_name="exact", use_dummy_dataset=True)
+model = RagTokenForGeneration.from_pretrained("facebook/rag-token-nq", retriever=retriever)
+
+# Directory containing the .txt files
+txt_files_directory = 'path_to_your_txt_files_directory'
+
+# Load the texts from the .txt files
+documents = []
+for filename in os.listdir(txt_files_directory):
+    if filename.endswith(".txt"):
+        with open(os.path.join(txt_files_directory, filename), 'r', encoding='utf-8') as file:
+            documents.append(file.read())
+
+# Update retriever's index with the new documents
+retriever.index.index_data(documents)
+
+def generate_answer(question):
+    inputs = tokenizer(question, return_tensors="pt")
+    generated = model.generate(**inputs)
+    return tokenizer.batch_decode(generated, skip_special_tokens=True)[0]
+
+# Example usage
+question = "What is the capital of France?"
+answer = generate_answer(question)
+print(answer)
