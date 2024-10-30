@@ -6,12 +6,12 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import faiss
 from langchain.prompts import PromptTemplate
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationalRetrievalChain
+from htmlTemplates import css, bot_template, user_template
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain.llms import HuggingFacePipeline
-from transformers import pipeline, GPT2Tokenizer, GPT2LMHeadModel
-from master_planner.htmlTemplates import css, bot_template, user_template
-
+from langchain.chains import ConversationalRetrievalChain
+from langchain.memory import ConversationBufferMemory
+from transformers import pipeline
 # creating custom template to guide llm model
 custom_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
 Chat History:
@@ -48,30 +48,24 @@ def get_vectorstore(chunks):
 
 # Replace ChatOpenAI with a HuggingFace LLM model pipeline
 def get_conversationchain(vectorstore):
-    # Load the GPT-2 model and tokenizer for local use
-    model_name = "gpt2"  # You can replace this with other local models (bigger or more specific models)
-    tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-    model = GPT2LMHeadModel.from_pretrained(model_name)
+    # Load the model and tokenizer
+    model_name = "TheBloke/Llama-2-7B-Chat-GPTQ"  # Example model
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, device_map="cuda")
 
-    # Create a Hugging Face pipeline for text generation
-    hf_pipeline = pipeline(
-        "text-generation", model=model, tokenizer=tokenizer, max_length=100
-    )
+    # Create a Hugging Face pipeline and wrap it for LangChain
+    hf_pipeline = pipeline("text-generation", model=model, tokenizer=tokenizer, max_length=1024, temperature=0.2)
+    llm = HuggingFacePipeline(pipeline=hf_pipeline)  # Wrap the pipeline
 
-    # Use HuggingFacePipeline with Langchain
-    llm = HuggingFacePipeline(pipeline=hf_pipeline)
-
-    # Set up conversation buffer memory
-    memory = ConversationBufferMemory(
-        memory_key="chat_history", return_messages=True, output_key="answer"
-    )
-
-    # Create the conversational retrieval chain using the Hugging Face model
+    # Initialize memory for conversation history
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
+    
+    # Create the conversational retrieval chain
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(),
         condense_question_prompt=CUSTOM_QUESTION_PROMPT,
-        memory=memory,
+        memory=memory
     )
 
     return conversation_chain

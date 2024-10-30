@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "master_planner" # choose a nice project name
+name = "rag_pdf" # choose a nice project name
 version = "0.1.0" # select a version number
 description = "Description." # please describe it
 authors = ["G0rg0ne"]
 license = "LICENSE" # make sure this file exists
 readme = "README.md" # make sure this file exists
-packages = [{ include = "master_planner", from = "src" }] # read belows
+packages = [{ include = "src" }] # read belows
 include = ["*.py", "src/**/*.json", "src/**/*.toml"] # on this later
 exclude = ["test/*"] # on this later
 
@@ -120,6 +120,9 @@ validators = "0.22.0"
 watchdog = "3.0.0"
 yarl = "1.9.2"
 zipp = "3.17.0"
+accelerate = "^1.0.1"
+auto-gptq = "^0.7.1"
+optimum = "^1.23.3"
 [tool.poetry.dev-dependencies]
 black = { extras = ["jupyter"], version = "*" }
 flake8 = "*"
