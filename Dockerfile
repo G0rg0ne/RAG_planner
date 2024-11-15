@@ -1,5 +1,5 @@
 # Use an NVIDIA CUDA base image with Python 3.10
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 # Install Python 3.10 and necessary Python utilities
 RUN apt-get update -qy && \
@@ -9,11 +9,11 @@ RUN apt-get update -qy && \
     apt-get install -y python3.10 python3.10-distutils && \
     ln -s /usr/bin/python3.10 /usr/bin/python
 
-# Manually install pip and Poetry
+# Manually install pip and upgrade to the latest version
 RUN wget https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py && \
     rm get-pip.py && \
-    python -m pip install poetry
+    python -m pip install --upgrade pip
 
 # Set the working directory
 WORKDIR /workdir
@@ -22,14 +22,13 @@ WORKDIR /workdir
 RUN apt-get update -qy && \
     apt-get install -y apt-utils gosu make
 
-# Copy all files to the container
+# Copy requirements.txt and install dependencies with --ignore-installed flag
+COPY requirements.txt /workdir/requirements.txt
+RUN python -m pip install --ignore-installed --no-cache-dir -r requirements.txt
+
+# Copy the rest of the project files
 COPY . /workdir
 
-# Install project dependencies using Poetry before running the Makefile
-RUN poetry install --no-cache
 
 # Expose the application port
 EXPOSE 8501
-
-# Specify default command (if applicable, otherwise keep the entrypoint in your Makefile)
-CMD ["make", "run"]

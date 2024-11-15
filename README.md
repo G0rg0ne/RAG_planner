@@ -18,15 +18,13 @@ This project implements a **Retrieval-Augmented Generation (RAG)** chatbot desig
 ├── 📁 data
 │   └── documents/          # Folder containing source documents
 ├── 📁 src
-│   ├── chatbot.py          # Chatbot interface
-│   ├── retriever.py        # Document retrieval logic
-│   ├── generator.py        # Response generation code
-│   └── utils.py            # Helper functions and utilities
+│   ├── app.py          # Chatbot interface
+│   ├── main.py        # Process that uses Replicate to load LLM
+│   └── replicate_test.py            # Test replicate
 ├── 📁 configs
 │   └── config.yaml         # Configuration file with model settings and paths
 ├── 📄 README.md            # Project documentation
 ├── Dockerfile              # Docker setup
-├── docker-compose.yml      # Docker Compose for running services
 └── pyproject.toml          # Poetry project configuration
 ```
 
@@ -57,7 +55,7 @@ This project implements a **Retrieval-Augmented Generation (RAG)** chatbot desig
    ```
 
    ```bash
-   docker run -it --rm --name rag_planner --gpus all -p 8501:8501 -v $(pwd):/workdir rag_planner/latest /bin/bash
+   docker run -it --rm --name rag_planner --gpus all -p 8501:8501 -v $(pwd):/workdir rag_test /bin/bash
    ```
 ### Model and Data Setup
 
@@ -75,51 +73,23 @@ This project implements a **Retrieval-Augmented Generation (RAG)** chatbot desig
 
 ### Running the Chatbot
 
-1. **Start the Retrieval Module**:
+1. **Start the Chatbot RAG Module**:
    - Run `retriever.py` to index documents in `data/documents`.
 
    ```bash
-   python src/retriever.py
+   streamlit run src/app.py
    ```
 
-2. **Run the Chatbot**:
+2. **Start Replicate LLM module**:
    - Execute `chatbot.py` to initiate the chatbot interface.
 
    ```bash
-   python src/chatbot.py
+   python src/main.py
    ```
 
 3. **Interacting with the Chatbot**:
    - Enter your query in the chatbot interface. The chatbot will retrieve relevant document information and generate a response.
 
-### Example Usage
-
-```text
-User: What are the key points of document X?
-Chatbot: Based on document X, here are the key points: [...]
-```
-
-## Configuration Details
-
-- **Retrieval Method**: Adjust the retrieval strategy (e.g., `TF-IDF`, `BM25`, `Embeddings`) in `retriever.py`.
-- **Generation Model**: Modify generation model settings in `config.yaml` for response customization.
-  
-## Development and Testing
-
-- **Testing**: Unit tests are located in the `tests/` directory.
-- **Contributions**: We welcome contributions! Please follow the guidelines in `CONTRIBUTING.md`.
-
-## Troubleshooting
-
-- **Common Issues**:
-  - *Model loading errors*: Ensure correct model paths and dependencies.
-  - *Slow retrieval*: Index documents to speed up retrieval times.
-
-## Roadmap
-
-- [ ] Add support for additional document formats.
-- [ ] Enhance retrieval accuracy with advanced embedding techniques.
-- [ ] Integrate with external APIs for real-time document updates.
 
 ## License
 

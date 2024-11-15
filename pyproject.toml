@@ -24,7 +24,7 @@ loguru = "*"
 
 # Here, specify development dependencies, which won't be part of the actual final dependency list
 # but that you need, well, to develop your project
-torch = "^2.3.1"
+torch = { version = "^2.0.0", extras = ["cuda"] }
 transformers = "4.35.2"
 openai = "1.3.5"
 replicate = "^0.28.0"
